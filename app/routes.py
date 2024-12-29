@@ -2,6 +2,7 @@ from app import app
 from flask import render_template
 import requests as req
 from app.models.product import Product 
+import logging
 
 @app.route('/')
 def index():
@@ -9,7 +10,24 @@ def index():
 
 @app.route('/kategori')
 def kategori():
-    return render_template("kategori.html")
+    temp = "tes"
+    products=[]
+    r=req.get('https://fakestoreapi.com/products')
+    for product in r.json():
+        if temp != product['category']:
+            temp = product['category']
+            products.append(
+             Product(
+                id=product['id'],
+                title=product['title'],
+                price=product['price'],
+                description=product['description'],
+                category=product['category'],
+                image=product['image']
+            )
+        )
+    app.logger.info( products )
+    return render_template("kategori.html", products=products)
 
 @app.route('/produk')
 def produk():
