@@ -5,16 +5,16 @@
 <!-- Produk -->
 <section id="produk" class="py-5 bg-light">
     <div class="container"  id="data-container">
-        <h2 class="text-center mb-4">All Produk</h2>
+        <h2 class="text-center mb-4" style="text-transform: uppercase;">{{ kategori }}</h2>
         <div class="row ">
             {% for product in products %}
             <div class="col-md-3">
-                <div class="card" style="margin-top: 10px; width: 300px; height: 550px;">
+                <div class="card" style="margin-top: 10px; width: 300px; height: 470px;">
                         <img src="{{product.image}}" class="card-img-top" style="width: 200px; height: 300px;">
                     <div class="card-body">
-                        <h5 class="card-title"><a href="/product/{{product.id}}">{{product.title}}</a></h5>
+                        <h5 class="card-title" style="text-overflow: ellipsis;overflow: hidden;	white-space: nowrap;"><a href="/product/{{product.id}}">{{product.title}}</a></h5>
                         <b class="card-text">{{product.category}}</b>
-                        <p class="card-text">{{product.price}}</p>
+                        <p class="card-text">$ {{product.price}}</p>
                         <a href="#" class="btn btn-primary">Beli</a>
                     </div>
                 </div>
@@ -25,34 +25,42 @@
     </div>
 </section>
 
-<div class="pagination align-items-center" id="pagination"> 
-    <a href="#" id="prev">Previous</a> 
-    <a href="#" class="page-link" data-page="1">1</a> 
-    <a href="#" class="page-link" data-page="2">2</a> 
-    <a href="#" class="page-link" data-page="3">3</a>
-    <a href="#" id="next">Next</a> 
-    <p id="page-numbers"> </p> 
-</div> 
+<div class="pagination align-items-center" id="pagination">
+	<ul class="pagination">
+    <li><button class="btn btn-light" href="#" id="prev">Previous</button></li>
+	<div class="pagination" id="pageno">
+
+	</div>
+	<li><button class="btn btn-light" href="#" id="next">Next</button></li>
+	<li><p id="page-numbers"> </p></li>
+	</ul>
+</div>
+
+
 
 <script>
-const cardsPerPage = 8; // Number of cards to show per page 
+const cardsPerPage = 4; // Number of cards to show per page 
 const dataContainer = document.getElementById('data-container'); 
 const pagination = document.getElementById('pagination'); 
 const prevButton = document.getElementById('prev'); 
 const nextButton = document.getElementById('next'); 
 const pageNumbers = document.getElementById('page-numbers'); 
-const pageLinks = document.querySelectorAll('.page-link'); 
-
 const cards = 
 	Array.from(dataContainer.getElementsByClassName('card')); 
 
 // Calculate the total number of pages 
 const totalPages = Math.ceil(cards.length / cardsPerPage);
-console.log(totalPages);
+let html = '';
+for (let i = 1; i <= totalPages; i++) {
+		html += `<li><a class="page-link" data-page="${i}">${i}</a></li>`;
+	};
+$('#pageno').html(html);
+
+const pageLinks = document.querySelectorAll('.page-link');
 let currentPage = 1; 
 
 // Function to display cards for a specific page 
-function displayPage(page) { 
+function displayPage(page) {
 	const startIndex = (page - 1) * cardsPerPage; 
 	const endIndex = startIndex + cardsPerPage; 
 	cards.forEach((card, index) => { 
@@ -61,19 +69,34 @@ function displayPage(page) {
 		} else { 
 			card.style.display = 'none'; 
 		} 
-	}); 
+	});
 } 
 
 // Function to update pagination buttons and page numbers 
 function updatePagination() { 
 	pageNumbers.textContent = 
-		`Page ${currentPage} of ${totalPages}`; 
-	prevButton.disabled = currentPage === 1; 
-	nextButton.disabled = currentPage === totalPages; 
+		`Page ${currentPage} of ${totalPages}`;
+	
+	if (currentPage == 1) {
+		prevButton.style.visibility = 'hidden';
+		nextButton.style.visibility = 'visible';
+		if (totalPages == 1){
+		nextButton.style.visibility = 'hidden';
+		}
+	} else if (currentPage === totalPages ) {
+		nextButton.style.visibility = 'hidden';
+		prevButton.style.visibility = 'visible';
+	} else {
+		prevButton.style.visibility = 'visible';
+		nextButton.style.visibility = 'visible';
+	}
+	
 	pageLinks.forEach((link) => { 
 		const page = parseInt(link.getAttribute('data-page')); 
 		link.classList.toggle('active', page === currentPage); 
-	}); 
+	});
+
+
 } 
 
 // Event listener for "Previous" button 
@@ -88,7 +111,7 @@ prevButton.addEventListener('click', () => {
 // Event listener for "Next" button 
 nextButton.addEventListener('click', () => { 
 	if (currentPage < totalPages) { 
-		currentPage++; 
+		currentPage++;
 		displayPage(currentPage); 
 		updatePagination(); 
 	} 

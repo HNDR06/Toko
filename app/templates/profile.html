@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="bg-white shadow-lg rounded-lg w-3/4 h-3/4 flex flex-col items-center border-2 border-gray-300 p-5">
+        <h1 class="text-2xl font-bold">Welcome to My Toko </h1>
+        <img src="{{url_for('static',filename='img/'+ profile.photo)}}" alt="Profile" style="width: 150px ;  height:200px;">
+    
+        <p><i>Assalamualaikum wr wb,</i> </p>
+        <p>Haloo.. nama saya <b>{{ profile.name }}</b>, senang bisa berbagi sedikit tentang diri saya di Toko Saya ini.  </p>
+        <p>Email Saya <b>{{ profile.email }}</b>, jika ada pertanyaan, bisa kirim email yaa :)</p>
+    </div>
+{% endblock %}
+
